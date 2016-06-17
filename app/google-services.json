@@ -1,0 +1,58 @@
+{
+  "project_info": {
+    "project_number": "569758984180",
+    "firebase_url": "https://smart-todo-1332.firebaseio.com",
+    "project_id": "smart-todo-1332",
+    "storage_bucket": "smart-todo-1332.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:569758984180:android:28e52aea347aa2ce",
+        "android_client_info": {
+          "package_name": "co.matthewfrost.taskmanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "569758984180-mc2p18julkfbaq73u85agrccpj1mv04k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "co.matthewfrost.taskmanager",
+            "certificate_hash": "EF61976A493471B58F1CC1C47084CEFCF84E2DE6"
+          }
+        },
+        {
+          "client_id": "569758984180-tarp4qoudg560mlk08gbgnmbtjhkj5ov.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "co.matthewfrost.taskmanager",
+            "certificate_hash": "4FF424E2B13B3767BA89D636C812AA0818D4B388"
+          }
+        },
+        {
+          "client_id": "569758984180-a6dl2kvno524em9mqnn0mlpfmns8nrdo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOVCmBCmsptN0s_iki69wqJg4kwYznBYY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
