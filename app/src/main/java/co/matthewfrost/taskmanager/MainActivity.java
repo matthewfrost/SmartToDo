@@ -367,8 +367,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         endDate.setText(date);
     }
 
-    private void setEndTime(Dialog d, String time){
-        TextView endTime = (TextView) d.findViewById(R.id.endTime);
+    private void setEndTime(String time){
+        TextView endTime = (TextView) taskDialog.findViewById(R.id.endTime);
         endTime.setText(time);
     }
 
@@ -381,14 +381,17 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        String formattedMinutes, minutes;
-        minutes = "00" + Integer.toString(minute);
-        formattedMinutes = minutes.substring((minutes.length() - 2), (minutes.length() - 1));
-        if(formattedMinutes.length() == 1){
-            formattedMinutes = formattedMinutes + "0";
+        String hour, minutes;
+        hour = Integer.toString(hourOfDay);
+        minutes = Integer.toString(minute);
+        if(hour.length() == 1){
+            hour = "0" + hour;
         }
-        time = hourOfDay + ":" + formattedMinutes;
-        setEndTime(taskDialog, time);
+        if(minutes.length() == 1){
+            minutes = "0" + minutes;
+        }
+        time = hour + ":" + minutes;
+        setEndTime(time);
     }
 
     @Override
