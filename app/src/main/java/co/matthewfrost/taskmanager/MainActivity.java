@@ -307,9 +307,9 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         LayoutInflater inflater = (LayoutInflater) context.getSystemService
                 (Context.LAYOUT_INFLATER_SERVICE);
 
-        /*TaskdialogBinding mBinding = DataBindingUtil.inflate(inflater, R.layout.taskdialog, null, false);
+        TaskdialogBinding mBinding = DataBindingUtil.inflate(inflater, R.layout.taskdialog, null, false);
         taskDialog.setContentView(mBinding.getRoot());
-        mBinding.setTask(currentTask);*/
+        mBinding.setTask(currentTask);
 
 
         final DateFormat dateformat;
@@ -331,6 +331,14 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             }
 
 
+        });
+
+        endTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                timeDialog = new TimePickerFragmenrt();
+                timeDialog.show(getFragmentManager(), "timePicker");
+            }
         });
 
         OK.setOnClickListener(new View.OnClickListener() {
