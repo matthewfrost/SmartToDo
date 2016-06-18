@@ -454,7 +454,9 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         switch (item.getItemId()) {
             // action with ID action_refresh was selected
             case R.id.action_settings:
-                Toast.makeText(this, "settings", Toast.LENGTH_SHORT).show();
+                Intent i;
+                i = new Intent(getBaseContext(), settings.class);
+                startActivity(i);
                 break;
             default:
                 break;
