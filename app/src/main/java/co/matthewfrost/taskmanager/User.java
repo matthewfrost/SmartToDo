@@ -2,18 +2,18 @@ package co.matthewfrost.taskmanager;
 
 import android.databinding.ObservableField;
 
+import java.io.Serializable;
+
 /**
  * Created by matth on 15/06/2016.
  */
-public class User
+public class User implements Serializable
 {
     private ObservableField<String>  email = new ObservableField<>();
-    private ObservableField<String>  password = new ObservableField<>();
     private ObservableField<String>  name = new ObservableField<>();
 
-    public User(String email, String password, String name){
+    public User(String email, String name){
         this.email.set(email);
-        this.password.set(password);
         this.name.set(name);
     }
 
@@ -29,19 +29,11 @@ public class User
         this.email.set(email);
     }
 
-    public String getPassword(){
-        return password.get();
-    }
-
-    public void setPassword(String password){
-        this.password.set(password);
-    }
-
-    public String getForename(){
+    public String getName(){
         return name.get();
     }
 
-    public void setForename(String forename){
+    public void setName(String forename){
         this.name.set(forename);
     }
 

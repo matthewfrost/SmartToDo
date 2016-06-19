@@ -6,6 +6,7 @@ import android.app.DialogFragment;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -68,10 +69,14 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     FirebaseApp app;
     FirebaseDatabase database;
     DatabaseReference ref;
+    DatabaseReference userRef;
     Button addTask;
     ProgressBar spinner;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    User user;
+    SimpleUser sUser;
+    SharedPreferences prefs;
 
     String uid;
     /**
@@ -84,6 +89,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        String email = null;
+        String name = null;
         list = new ArrayList<Task>();
         addTask = (Button) findViewById(R.id.addTask);
         spinner = (ProgressBar) findViewById(R.id.progressBar);
@@ -109,12 +116,51 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         app = FirebaseApp.getInstance();
         database = FirebaseDatabase.getInstance(app);
         ref = database.getReference("Tasks/" + uid );
+        userRef = database.getReference("Users/" + uid);
 
         Log.v("debug", "onCreate");
         taskList = (ListView) findViewById(R.id.listView);
         arrayAdapter = new TaskArrayAdapter(this, list);
         taskList.setAdapter(arrayAdapter);
         taskList.setLongClickable(true);
+
+        if(intent.getSerializableExtra("user") != null){
+            user = (User) intent.getSerializableExtra("user");
+        }
+        else{
+            prefs = getApplicationContext().getSharedPreferences("co.matthewfrost.taskmanager", Context.MODE_PRIVATE);
+            email = prefs.getString("email", null);
+            name = prefs.getString("name", null);
+        }
+        if((name == null || email == null) && user == null){
+            userRef.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    sUser = dataSnapshot.getValue(SimpleUser.class);
+                    user = new User(sUser.getEmail(), sUser.getName());
+                    userRef.removeEventListener(this);
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
 
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -456,6 +502,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             case R.id.action_settings:
                 Intent i;
                 i = new Intent(getBaseContext(), settings.class);
+                i.putExtra("user", user);
                 startActivity(i);
                 break;
             default:

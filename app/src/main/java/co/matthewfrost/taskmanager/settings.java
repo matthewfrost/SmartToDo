@@ -2,6 +2,7 @@ package co.matthewfrost.taskmanager;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,13 +19,21 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.android.gms.tasks.Task;
 
+import co.matthewfrost.taskmanager.databinding.ActivitySettingsBinding;
+
 public class settings extends AppCompatActivity {
     Dialog passwordDialog;
     FirebaseUser user;
+    User currentUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        Intent i = getIntent();
+        currentUser = (User) i.getSerializableExtra("user");
+        ActivitySettingsBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_settings);
+        binding.setUser(currentUser);
+
     }
 
     public void logoutUser(View v){
