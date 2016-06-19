@@ -9,14 +9,12 @@ public class User
 {
     private ObservableField<String>  email = new ObservableField<>();
     private ObservableField<String>  password = new ObservableField<>();
-    private ObservableField<String>  forename = new ObservableField<>();
-    private ObservableField<String> surname = new ObservableField<>();
+    private ObservableField<String>  name = new ObservableField<>();
 
-    public User(String email, String password, String forename, String surname){
+    public User(String email, String password, String name){
         this.email.set(email);
         this.password.set(password);
-        this.forename.set(forename);
-        this.surname.set(surname);
+        this.name.set(name);
     }
 
     public User(){
@@ -40,18 +38,11 @@ public class User
     }
 
     public String getForename(){
-        return forename.get();
+        return name.get();
     }
 
     public void setForename(String forename){
-        this.forename.set(forename);
+        this.name.set(forename);
     }
 
-    public String getSurname(){
-        return surname.get();
-    }
-
-    public void setSurname(String surname){
-        this.surname.set(surname);
-    }
 }
