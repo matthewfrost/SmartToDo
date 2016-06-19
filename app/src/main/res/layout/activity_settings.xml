@@ -81,11 +81,21 @@
         android:textColor="#f5f5f5"
         android:elevation="2dp"
         android:onClick="resetCurrentUserPassword"
-        android:layout_below="@+id/textView14"
-        android:layout_alignRight="@+id/button3"
-        android:layout_alignEnd="@+id/button3"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
-        android:layout_marginTop="40dp" />
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/textView14"
+        android:layout_toStartOf="@+id/textView14" />
+
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pin top task in notification tray"
+        android:id="@+id/switch1"
+        android:layout_marginTop="57dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:layout_below="@+id/textView14"
+        android:layout_toLeftOf="@+id/textView14"
+        android:layout_toStartOf="@+id/textView14" />
 </RelativeLayout>
 </layout>

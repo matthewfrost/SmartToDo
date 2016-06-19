@@ -1,14 +1,17 @@
 package co.matthewfrost.taskmanager;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -48,6 +51,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Logger;
 import com.google.firebase.database.ValueEventListener;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -77,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     User user;
     SimpleUser sUser;
     SharedPreferences prefs;
+    AlarmManager alarmManager;
 
     String uid;
     /**
@@ -94,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         list = new ArrayList<Task>();
         addTask = (Button) findViewById(R.id.addTask);
         spinner = (ProgressBar) findViewById(R.id.progressBar);
+        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         spinner.setVisibility(View.VISIBLE);
         Intent intent = getIntent();
         uid = intent.getStringExtra("uid");
@@ -299,7 +308,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int minute = c.get(Calendar.MINUTE);
 
-        endDate.setText(day + "-" + month + "-" + year);
+        endDate.setText(day + "/" + month + "/" + year);
         endTime.setText(hour + ":" + minute);
 
         endDate.setOnClickListener(new View.OnClickListener(){
@@ -334,17 +343,32 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 } else {
                     urgencyLevel = 100;
                 }
-                    DateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
-                    Date d = new Date();
-                    String s = dateformat.format(d);
-                    String taskEnd = endDate.getText().toString();
-                    String time = endTime.getText().toString();
+                DateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
+                Date d = new Date();
+                DateTime dt = new DateTime(d);
+                String s = dateformat.format(d);
+                String taskEnd = endDate.getText().toString();
+                String time = endTime.getText().toString();
+                DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");
+                DateTime endDT = formatter.parseDateTime(taskEnd +" " +time);
+                endDT = endDT.plusMonths(1);
+                Task task = new Task(Name.getText().toString(), Description.getText().toString(), s, taskEnd, time, urgencyLevel);
 
-                    Task task = new Task(Name.getText().toString(), Description.getText().toString(), s, taskEnd, time, urgencyLevel);
+                ref.push().setValue(task);
+                taskDialog.dismiss();
+                arrayAdapter.notifyDataSetChanged();
+                Long diff = endDT.getMillis() - dt.getMillis();
+                Intent i = new Intent(getBaseContext(), TaskAlerter.class);
+                i.putExtra("title", task.getName());
+                i.putExtra("desc", task.getName());
+                PendingIntent alarmIntent = PendingIntent.getBroadcast(getBaseContext(), 0, i, 0);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis() + diff, alarmIntent);
+                }
+                else{
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis() + diff, alarmIntent);
+                }
 
-                    ref.push().setValue(task);
-                    taskDialog.dismiss();
-                    arrayAdapter.notifyDataSetChanged();
             }
         });
 

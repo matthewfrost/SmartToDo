@@ -5,12 +5,13 @@ import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 import android.util.EventLogTags;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
  * Created by matth on 05/06/2016.
  */
-public class Task extends BaseObservable {
+public class Task extends BaseObservable implements Serializable {
     ObservableField<String> name = new ObservableField<String>();
     ObservableField<String> description = new ObservableField<String>();
     ObservableField<String> start = new ObservableField<String>();
