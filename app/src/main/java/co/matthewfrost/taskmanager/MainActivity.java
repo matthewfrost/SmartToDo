@@ -102,7 +102,6 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         list = new ArrayList<Task>();
         addTask = (Button) findViewById(R.id.addTask);
         spinner = (ProgressBar) findViewById(R.id.progressBar);
-        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         spinner.setVisibility(View.VISIBLE);
         Intent intent = getIntent();
         uid = intent.getStringExtra("uid");
@@ -188,6 +187,12 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 SimpleTask recievedTask = dataSnapshot.getValue(SimpleTask.class);
                 Task t = new Task(recievedTask.getName(), recievedTask.getDescription(), recievedTask.getStart(), recievedTask.getEnd(), recievedTask.getEndTime(), recievedTask.getUrgency(), recievedTask.getUid());
+                DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");
+                DateTime endDT = formatter.parseDateTime(t.getEnd() +" " +t.getEndTime());
+                DateTime curr = new DateTime();
+                if(endDT.isAfter(curr)){
+                    createNotifications(t);
+                }
                 t.setDbKey(dataSnapshot.getKey());
                 list.add(t);
                 arrayAdapter.notifyDataSetChanged();
@@ -308,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int minute = c.get(Calendar.MINUTE);
 
-        endDate.setText(day + "/" + month + "/" + year);
+        endDate.setText(day + "/" + (month + 1) + "/" + year);
         endTime.setText(hour + ":" + minute);
 
         endDate.setOnClickListener(new View.OnClickListener(){
@@ -345,29 +350,16 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 }
                 DateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
                 Date d = new Date();
-                DateTime dt = new DateTime(d);
+
                 String s = dateformat.format(d);
                 String taskEnd = endDate.getText().toString();
                 String time = endTime.getText().toString();
-                DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");
-                DateTime endDT = formatter.parseDateTime(taskEnd +" " +time);
-                endDT = endDT.plusMonths(1);
                 Task task = new Task(Name.getText().toString(), Description.getText().toString(), s, taskEnd, time, urgencyLevel);
-
+                createNotifications(task);
                 ref.push().setValue(task);
                 taskDialog.dismiss();
                 arrayAdapter.notifyDataSetChanged();
-                Long diff = endDT.getMillis() - dt.getMillis();
-                Intent i = new Intent(getBaseContext(), TaskAlerter.class);
-                i.putExtra("title", task.getName());
-                i.putExtra("desc", task.getName());
-                PendingIntent alarmIntent = PendingIntent.getBroadcast(getBaseContext(), 0, i, 0);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis() + diff, alarmIntent);
-                }
-                else{
-                    alarmManager.set(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis() + diff, alarmIntent);
-                }
+
 
             }
         });
@@ -438,6 +430,26 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
         taskDialog.show();
 
+    }
+
+    public void createNotifications(Task t){
+        Date d = new Date();
+        DateTime dt = new DateTime(d);
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");
+        DateTime endDT = formatter.parseDateTime(t.getEnd() +" " +t.getEndTime());
+
+        Long diff = endDT.getMillis() - dt.getMillis();
+        Intent i = new Intent(getBaseContext(), TaskAlerter.class);
+        i.putExtra("title", t.getName());
+        i.putExtra("desc", t.getDescription());
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(getBaseContext(), (int)System.currentTimeMillis(), i, 0);
+        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis() + diff, alarmIntent);
+        }
+        else{
+            alarmManager.set(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis() + diff, alarmIntent);
+        }
     }
 
     private void setEndDate(Dialog d, String date){

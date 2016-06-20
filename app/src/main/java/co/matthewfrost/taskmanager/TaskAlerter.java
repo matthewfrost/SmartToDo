@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.NotificationCompat;
 
+import java.util.Calendar;
+
 /**
  * Created by matth on 19/06/2016.
  */
@@ -17,11 +19,12 @@ public class TaskAlerter extends BroadcastReceiver
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification notification = new NotificationCompat.Builder(context)
                 .setContentTitle(intent.getStringExtra("title"))
-                .setContentText("notification")
-                .setSmallIcon(R.drawable.common_ic_googleplayservices)
+                .setContentText(intent.getStringExtra("desc"))
+                .setSmallIcon(R.drawable.common_full_open_on_phone)
+                .setVibrate(new long[]{500, 500})
                 .setAutoCancel(true).build();
 
-        manager.notify(0, notification);
+        manager.notify((int)System.currentTimeMillis(), notification);
 
     }
 }
