@@ -1,6 +1,7 @@
 package co.matthewfrost.taskmanager;
 
 import android.databinding.BaseObservable;
+import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 import android.util.EventLogTags;
@@ -19,10 +20,12 @@ public class Task extends BaseObservable implements Serializable {
     ObservableField<String> endTime = new ObservableField<String>();
     ObservableInt urgency = new ObservableInt();
     ObservableField<String> uid = new ObservableField<String>();
+    ObservableBoolean hasTarget = new ObservableBoolean();
     String dbKey;
 
     public Task(){
         uid.set(UUID.randomUUID().toString());
+        hasTarget.set(false);
     }
 
     public Task(String name, String Desc, String Start, String End, String time, int urgency){
@@ -105,4 +108,11 @@ public class Task extends BaseObservable implements Serializable {
         return dbKey;
     }
 
+    public boolean getHasTarget() {
+        return hasTarget.get();
+    }
+
+    public void setHasTarget(boolean hasTarget) {
+        this.hasTarget.set(hasTarget);
+    }
 }

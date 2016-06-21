@@ -27,11 +27,13 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -55,6 +57,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.io.Console;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -73,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     String date;
     String time;
     Task currentTask;
+    Task newTask;
     FirebaseApp app;
     FirebaseDatabase database;
     DatabaseReference ref;
@@ -293,10 +297,20 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     }
 
     protected void createTaskDialog() {
+
+        newTask = new Task();
         taskDialog = new Dialog(this);
-        taskDialog.setContentView(R.layout.taskdialog);
         taskDialog.setTitle("Add Task");
 
+        Context context = taskDialog.getContext();
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService
+                (Context.LAYOUT_INFLATER_SERVICE);
+
+        TaskdialogBinding mBinding = DataBindingUtil.inflate(inflater, R.layout.taskdialog, null, false);
+        taskDialog.setContentView(mBinding.getRoot());
+        mBinding.setTask(newTask);
+
+        newTask.setName("tst");
         Button cancel = (Button) taskDialog.findViewById(R.id.dialogCancel);
         Button OK = (Button) taskDialog.findViewById(R.id.dialogOK);
         final EditText Name = (EditText) taskDialog.findViewById(R.id.dialogNameText);
@@ -304,6 +318,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         final CheckBox urgent = (CheckBox) taskDialog.findViewById(R.id.dialogUrgent);
         final TextView endDate = (TextView) taskDialog.findViewById(R.id.endDate);
         final TextView endTime = (TextView) taskDialog.findViewById(R.id.endTime);
+        final TextView txtTarget = (TextView) taskDialog.findViewById(R.id.dialogEndDate);
+        final Switch target = (Switch) taskDialog.findViewById(R.id.target);
 
         final Calendar c = Calendar.getInstance();
         int day = c.get(Calendar.DAY_OF_MONTH);
@@ -313,22 +329,24 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int minute = c.get(Calendar.MINUTE);
 
-        endDate.setText(day + "/" + (month + 1) + "/" + year);
-        endTime.setText(hour + ":" + minute);
+        if(newTask.getHasTarget()) {
+            endDate.setText(day + "/" + (month + 1) + "/" + year);
+            endTime.setText(hour + ":" + minute);
 
-        endDate.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                dateDialog = new DatePickerFragment();
-                dateDialog.show(getFragmentManager(), "datePicker");
-            }
-        });
+            endDate.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    dateDialog = new DatePickerFragment();
+                    dateDialog.show(getFragmentManager(), "datePicker");
+                }
+            });
 
-        endTime.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                timeDialog = new TimePickerFragmenrt();
-                timeDialog.show(getFragmentManager(), "timePicker");
-            }
-        });
+            endTime.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    timeDialog = new TimePickerFragmenrt();
+                    timeDialog.show(getFragmentManager(), "timePicker");
+                }
+            });
+        }
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -344,9 +362,9 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 int urgencyLevel;
                 isurgent = urgent.isChecked();
                 if (isurgent) {
-                    urgencyLevel = 1000;
+                    newTask.setUrgency(1000);
                 } else {
-                    urgencyLevel = 100;
+                    newTask.setUrgency(100);
                 }
                 DateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
                 Date d = new Date();
@@ -354,15 +372,35 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                 String s = dateformat.format(d);
                 String taskEnd = endDate.getText().toString();
                 String time = endTime.getText().toString();
-                Task task = new Task(Name.getText().toString(), Description.getText().toString(), s, taskEnd, time, urgencyLevel);
-                createNotifications(task);
-                ref.push().setValue(task);
+                //Task task = new Task(Name.getText().toString(), Description.getText().toString(), s, taskEnd, time, urgencyLevel);
+
+               // ref.push().setValue(task);
                 taskDialog.dismiss();
                 arrayAdapter.notifyDataSetChanged();
 
 
             }
         });
+
+
+        target.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!newTask.getHasTarget()){
+                    newTask.setHasTarget(false);
+                    endDate.setVisibility(View.GONE);
+                    endTime.setVisibility(View.GONE);
+                    txtTarget.setVisibility(View.GONE);
+                }
+                else{
+                    newTask.setHasTarget(true);
+                    endDate.setVisibility(View.VISIBLE);
+                    endTime.setVisibility(View.VISIBLE);
+                    txtTarget.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
 
         taskDialog.show();
     }

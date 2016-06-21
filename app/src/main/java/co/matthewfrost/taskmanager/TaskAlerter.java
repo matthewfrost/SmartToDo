@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.NotificationCompat;
 
 import java.util.Calendar;
@@ -22,6 +23,7 @@ public class TaskAlerter extends BroadcastReceiver
                 .setContentText(intent.getStringExtra("desc"))
                 .setSmallIcon(R.drawable.common_full_open_on_phone)
                 .setVibrate(new long[]{500, 500})
+                .setLights(Color.GREEN, 1, 1)
                 .setAutoCancel(true).build();
 
         manager.notify((int)System.currentTimeMillis(), notification);

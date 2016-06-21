@@ -2,6 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     >
     <data>
+        <import type="android.view.View"/>
         <variable name= "task" type= "co.matthewfrost.taskmanager.Task"/>
     </data>
     <LinearLayout android:orientation="vertical"
@@ -36,10 +37,19 @@
             android:ems="10"
             android:id="@+id/dialogDescriptionText" />
 
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Set Target"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:checked="@={task.hasTarget}"
+            android:id="@+id/target" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:visibility="@{task.getHasTarget() ? View.VISIBLE : View.GONE}"
             android:text="End Date"
             android:id="@+id/dialogEndDate" />
 
@@ -48,6 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:visibility="@{task.getHasTarget() ? View.VISIBLE : View.GONE}"
             android:text="@={task.end}"
             android:id="@+id/endDate" />
 
@@ -56,6 +67,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:visibility="@{task.getHasTarget() ?View.VISIBLE : View.GONE}"
             android:text="@={task.endTime}"
             android:id="@+id/endTime" />
 
@@ -69,14 +81,14 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="233dp">
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:text="OK"
                 android:id="@+id/dialogOK"
-                android:layout_alignParentTop="true"
+                android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true" />
 
@@ -85,7 +97,7 @@
                 android:layout_height="50dp"
                 android:text="Cancel"
                 android:id="@+id/dialogCancel"
-                android:layout_alignParentTop="true"
+                android:layout_alignParentBottom="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
         </RelativeLayout>
