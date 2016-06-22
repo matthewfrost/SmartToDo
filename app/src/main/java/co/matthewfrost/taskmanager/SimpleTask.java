@@ -17,6 +17,8 @@ public class SimpleTask
     String endTime;
     int urgency;
     String uid;
+    boolean hasTarget;
+    int notificationID;
 
     public SimpleTask(){
         this.uid = UUID.randomUUID().toString();
@@ -82,5 +84,21 @@ public class SimpleTask
 
     public String getUid() {
         return uid;
+    }
+
+    public boolean isHasTarget() {
+        return hasTarget;
+    }
+
+    public void setHasTarget(boolean hasTarget) {
+        this.hasTarget = hasTarget;
+    }
+
+    public int getNotificationID() {
+        return notificationID;
+    }
+
+    public void setNotificationID(int notificationID) {
+        this.notificationID = notificationID;
     }
 }

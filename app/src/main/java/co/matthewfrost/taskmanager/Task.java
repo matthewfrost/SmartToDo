@@ -22,6 +22,7 @@ public class Task extends BaseObservable implements Serializable {
     ObservableField<String> uid = new ObservableField<String>();
     ObservableBoolean hasTarget = new ObservableBoolean();
     String dbKey;
+    int notificationID;
 
     public Task(){
         uid.set(UUID.randomUUID().toString());
@@ -114,5 +115,13 @@ public class Task extends BaseObservable implements Serializable {
 
     public void setHasTarget(boolean hasTarget) {
         this.hasTarget.set(hasTarget);
+    }
+
+    public int getNotificationID() {
+        return notificationID;
+    }
+
+    public void setNotificationID(int notificationID) {
+        this.notificationID = notificationID;
     }
 }

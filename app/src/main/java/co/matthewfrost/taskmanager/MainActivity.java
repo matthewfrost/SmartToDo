@@ -22,21 +22,16 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.MultiAutoCompleteTextView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 
 import com.google.android.gms.appindexing.Action;
@@ -50,14 +45,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Logger;
 import com.google.firebase.database.ValueEventListener;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import java.io.Console;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -83,8 +76,6 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     DatabaseReference userRef;
     Button addTask;
     ProgressBar spinner;
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
     User user;
     SimpleUser sUser;
     SharedPreferences prefs;
@@ -109,6 +100,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         spinner.setVisibility(View.VISIBLE);
         Intent intent = getIntent();
         uid = intent.getStringExtra("uid");
+        FirebaseAuth mAuth;
+        FirebaseAuth.AuthStateListener mAuthListener;
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -130,7 +123,6 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         ref = database.getReference("Tasks/" + uid );
         userRef = database.getReference("Users/" + uid);
 
-        Log.v("debug", "onCreate");
         taskList = (ListView) findViewById(R.id.listView);
         arrayAdapter = new TaskArrayAdapter(this, list);
         taskList.setAdapter(arrayAdapter);
@@ -191,11 +183,15 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 SimpleTask recievedTask = dataSnapshot.getValue(SimpleTask.class);
                 Task t = new Task(recievedTask.getName(), recievedTask.getDescription(), recievedTask.getStart(), recievedTask.getEnd(), recievedTask.getEndTime(), recievedTask.getUrgency(), recievedTask.getUid());
-                DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");
-                DateTime endDT = formatter.parseDateTime(t.getEnd() +" " +t.getEndTime());
-                DateTime curr = new DateTime();
-                if(endDT.isAfter(curr)){
-                    createNotifications(t);
+                t.setHasTarget(recievedTask.isHasTarget());
+                if(t.getHasTarget()) {
+                    t.setNotificationID(recievedTask.getNotificationID());
+                    DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");
+                    DateTime endDT = formatter.parseDateTime(t.getEnd() + " " + t.getEndTime());
+                    DateTime curr = new DateTime();
+                    if (endDT.isAfter(curr)) {
+                        createNotifications(t);
+                    }
                 }
                 t.setDbKey(dataSnapshot.getKey());
                 list.add(t);
@@ -207,6 +203,17 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 SimpleTask recievedTask = dataSnapshot.getValue(SimpleTask.class);
                 Task t = new Task(recievedTask.getName(), recievedTask.getDescription(), recievedTask.getStart(), recievedTask.getEnd(), recievedTask.getEndTime(), recievedTask.getUrgency(), recievedTask.getUid());
+                t.setHasTarget(recievedTask.isHasTarget());
+                if(t.getHasTarget()) {
+                    t.setNotificationID(recievedTask.getNotificationID());
+                    DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");
+                    DateTime endDT = formatter.parseDateTime(t.getEnd() + " " + t.getEndTime());
+                    DateTime curr = new DateTime();
+                    if (endDT.isAfter(curr)) {
+                        createNotifications(t);
+                    }
+                }
+                t.setDbKey(dataSnapshot.getKey());
                 for(int i = 0; i < list.size(); i++){
                     if(list.get(i).getUid().equals(t.getUid())){
                         list.set(i, t);
@@ -310,48 +317,21 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         taskDialog.setContentView(mBinding.getRoot());
         mBinding.setTask(newTask);
 
-        newTask.setName("tst");
         Button cancel = (Button) taskDialog.findViewById(R.id.dialogCancel);
         Button OK = (Button) taskDialog.findViewById(R.id.dialogOK);
-        final EditText Name = (EditText) taskDialog.findViewById(R.id.dialogNameText);
-        final EditText Description = (EditText) taskDialog.findViewById(R.id.dialogDescriptionText);
         final CheckBox urgent = (CheckBox) taskDialog.findViewById(R.id.dialogUrgent);
         final TextView endDate = (TextView) taskDialog.findViewById(R.id.endDate);
         final TextView endTime = (TextView) taskDialog.findViewById(R.id.endTime);
         final TextView txtTarget = (TextView) taskDialog.findViewById(R.id.dialogEndDate);
         final Switch target = (Switch) taskDialog.findViewById(R.id.target);
 
-        final Calendar c = Calendar.getInstance();
-        int day = c.get(Calendar.DAY_OF_MONTH);
-        int month = c.get(Calendar.MONTH);
-        int year = c.get(Calendar.YEAR);
 
-        int hour = c.get(Calendar.HOUR_OF_DAY);
-        int minute = c.get(Calendar.MINUTE);
-
-        if(newTask.getHasTarget()) {
-            endDate.setText(day + "/" + (month + 1) + "/" + year);
-            endTime.setText(hour + ":" + minute);
-
-            endDate.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    dateDialog = new DatePickerFragment();
-                    dateDialog.show(getFragmentManager(), "datePicker");
-                }
-            });
-
-            endTime.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    timeDialog = new TimePickerFragmenrt();
-                    timeDialog.show(getFragmentManager(), "timePicker");
-                }
-            });
-        }
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 taskDialog.dismiss();
+                newTask = null;
             }
         });
 
@@ -359,26 +339,20 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             @Override
             public void onClick(View v) {
                 boolean isurgent;
-                int urgencyLevel;
                 isurgent = urgent.isChecked();
                 if (isurgent) {
                     newTask.setUrgency(1000);
                 } else {
                     newTask.setUrgency(100);
                 }
-                DateFormat dateformat = new SimpleDateFormat("dd-MM-yyyy");
-                Date d = new Date();
+                if(newTask.getHasTarget()) {
+                    newTask.setNotificationID((int)System.currentTimeMillis());
+                }
 
-                String s = dateformat.format(d);
-                String taskEnd = endDate.getText().toString();
-                String time = endTime.getText().toString();
-                //Task task = new Task(Name.getText().toString(), Description.getText().toString(), s, taskEnd, time, urgencyLevel);
-
-               // ref.push().setValue(task);
+                ref.push().setValue(newTask);
                 taskDialog.dismiss();
                 arrayAdapter.notifyDataSetChanged();
-
-
+                newTask = null;
             }
         });
 
@@ -397,6 +371,31 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                     endDate.setVisibility(View.VISIBLE);
                     endTime.setVisibility(View.VISIBLE);
                     txtTarget.setVisibility(View.VISIBLE);
+
+                    final Calendar c = Calendar.getInstance();
+                    int day = c.get(Calendar.DAY_OF_MONTH);
+                    int month = c.get(Calendar.MONTH);
+                    int year = c.get(Calendar.YEAR);
+
+                    int hour = c.get(Calendar.HOUR_OF_DAY);
+                    int minute = c.get(Calendar.MINUTE);
+
+                    endDate.setText(day + "/" + (month + 1) + "/" + year);
+                    endTime.setText(hour + ":" + minute);
+
+                    endDate.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            dateDialog = new DatePickerFragment();
+                            dateDialog.show(getFragmentManager(), "datePicker");
+                        }
+                    });
+
+                    endTime.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            timeDialog = new TimePickerFragmenrt();
+                            timeDialog.show(getFragmentManager(), "timePicker");
+                        }
+                    });
                 }
             }
         });
@@ -420,15 +419,13 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         mBinding.setTask(currentTask);
 
 
-        final DateFormat dateformat;
-        dateformat = new SimpleDateFormat("dd-MM-yyyy");
         Button cancel = (Button) taskDialog.findViewById(R.id.dialogCancel);
         Button OK = (Button) taskDialog.findViewById(R.id.dialogOK);
-        final EditText Name = (EditText) taskDialog.findViewById(R.id.dialogNameText);
-        final EditText Description = (EditText) taskDialog.findViewById(R.id.dialogDescriptionText);
         final CheckBox urgent = (CheckBox) taskDialog.findViewById(R.id.dialogUrgent);
         final TextView endDate = (TextView) taskDialog.findViewById(R.id.endDate);
         final TextView endTime = (TextView) taskDialog.findViewById(R.id.endTime);
+        final Switch target = (Switch) taskDialog.findViewById(R.id.target);
+        final TextView txtTarget = (TextView) taskDialog.findViewById(R.id.dialogEndDate);
 
 
         endDate.setOnClickListener(new View.OnClickListener() {
@@ -452,9 +449,39 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         OK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                boolean isurgent;
+                isurgent = urgent.isChecked();
+                if (isurgent) {
+                    currentTask.setUrgency(1000);
+                } else {
+                    currentTask.setUrgency(100);
+                }
+                if(currentTask.getHasTarget()) {
 
+                    if(currentTask.getNotificationID() == 0) {
+                        currentTask.setNotificationID((int) System.currentTimeMillis());
+                    }
+                }
                     ref.child(currentTask.getDbKey() + "/").setValue(currentTask);
                     taskDialog.dismiss();
+            }
+        });
+
+        target.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!currentTask.getHasTarget()){
+                    newTask.setHasTarget(false);
+                    endDate.setVisibility(View.GONE);
+                    endTime.setVisibility(View.GONE);
+                    txtTarget.setVisibility(View.GONE);
+                }
+                else{
+                    currentTask.setHasTarget(true);
+                    endDate.setVisibility(View.VISIBLE);
+                    endTime.setVisibility(View.VISIBLE);
+                    txtTarget.setVisibility(View.VISIBLE);
+                }
             }
         });
 
@@ -480,6 +507,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         Intent i = new Intent(getBaseContext(), TaskAlerter.class);
         i.putExtra("title", t.getName());
         i.putExtra("desc", t.getDescription());
+        i.putExtra("notificationID", t.getNotificationID());
         PendingIntent alarmIntent = PendingIntent.getBroadcast(getBaseContext(), (int)System.currentTimeMillis(), i, 0);
         alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -574,9 +602,12 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         switch (item.getItemId()) {
             // action with ID action_refresh was selected
             case R.id.action_settings:
+                Task top = list.get(0);
                 Intent i;
                 i = new Intent(getBaseContext(), settings.class);
                 i.putExtra("user", user);
+                i.putExtra("title", top.getName());
+                i.putExtra("desc", top.getDescription());
                 startActivity(i);
                 break;
             default:

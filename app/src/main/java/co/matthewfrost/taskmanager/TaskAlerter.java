@@ -26,7 +26,7 @@ public class TaskAlerter extends BroadcastReceiver
                 .setLights(Color.GREEN, 1, 1)
                 .setAutoCancel(true).build();
 
-        manager.notify((int)System.currentTimeMillis(), notification);
+        manager.notify(intent.getIntExtra("notificationID", (int)System.currentTimeMillis()), notification);
 
     }
 }
