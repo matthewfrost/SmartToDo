@@ -5,10 +5,11 @@
         <import type="android.view.View"/>
         <variable name= "task" type= "co.matthewfrost.taskmanager.Task"/>
     </data>
+
     <LinearLayout android:orientation="vertical"
         android:minWidth="1000dp"
-        android:layout_width="match_parent" android:layout_height="fill_parent">
-
+        android:layout_width="match_parent" android:layout_height="fill_parent"
+        android:padding="@dimen/activity_horizontal_margin">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -90,7 +91,10 @@
                 android:id="@+id/dialogOK"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
+                android:layout_alignParentEnd="true"
+                android:background="#2ecc71"
+                android:textColor="#f5f5f5"
+                android:elevation="4dp" />
 
             <Button
                 android:layout_width="100dp"
@@ -99,8 +103,10 @@
                 android:id="@+id/dialogCancel"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_alignParentStart="true"
+                android:elevation="4dp"
+                android:background="#c0392b"
+                android:textColor="#f5f5f5" />
         </RelativeLayout>
-
     </LinearLayout>
 </layout>
