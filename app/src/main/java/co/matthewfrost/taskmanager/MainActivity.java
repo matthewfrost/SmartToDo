@@ -51,8 +51,6 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -69,7 +67,6 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     String date;
     String time;
     Task currentTask;
-    Task newTask;
     FirebaseApp app;
     FirebaseDatabase database;
     DatabaseReference ref;
@@ -365,7 +362,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
             @Override
             public void onClick(View v) {
                 if(!currentTask.getHasTarget()){
-                    newTask.setHasTarget(false);
+                    currentTask.setHasTarget(false);
                     endDate.setVisibility(View.GONE);
                     endTime.setVisibility(View.GONE);
                     txtTarget.setVisibility(View.GONE);
