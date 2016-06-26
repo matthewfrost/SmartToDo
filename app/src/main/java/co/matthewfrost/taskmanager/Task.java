@@ -21,6 +21,8 @@ public class Task extends BaseObservable implements Serializable {
     ObservableInt urgency = new ObservableInt();
     ObservableField<String> uid = new ObservableField<String>();
     ObservableBoolean hasTarget = new ObservableBoolean();
+    ObservableField<String> address = new ObservableField<>();
+    ObservableBoolean hasLocation = new ObservableBoolean();
     String dbKey;
     int notificationID;
 
@@ -123,5 +125,21 @@ public class Task extends BaseObservable implements Serializable {
 
     public void setNotificationID(int notificationID) {
         this.notificationID = notificationID;
+    }
+
+    public String getAddress() {
+        return address.get();
+    }
+
+    public void setAddress(String address) {
+        this.address.set(address);
+    }
+
+    public boolean getHasLocation() {
+        return hasLocation.get();
+    }
+
+    public void setHasLocation(boolean hasLocation) {
+        this.hasLocation.set(hasLocation);
     }
 }

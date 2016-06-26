@@ -1,5 +1,6 @@
 package co.matthewfrost.taskmanager;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -55,7 +56,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import co.matthewfrost.taskmanager.databinding.TaskdialogBinding;
 
 public class MainActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener{
     ListView taskList;
@@ -304,122 +304,20 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
 
     protected void editTaskDialog(final Task t, final int postion) {
-        taskDialog = new Dialog(this);
+        /*taskDialog = new Dialog(this);
         taskDialog.setTitle("Edit Task");
-        if(t == null){
-            currentTask = new Task();
-        }
-        else {
-            currentTask = t;
-        }
 
-        Context context = taskDialog.getContext();
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService
-                (Context.LAYOUT_INFLATER_SERVICE);
-
-        TaskdialogBinding mBinding = DataBindingUtil.inflate(inflater, R.layout.taskdialog, null, false);
-        taskDialog.setContentView(mBinding.getRoot());
-        mBinding.setTask(currentTask);
-
-
-        Button cancel = (Button) taskDialog.findViewById(R.id.dialogCancel);
-        Button OK = (Button) taskDialog.findViewById(R.id.dialogOK);
-        final CheckBox urgent = (CheckBox) taskDialog.findViewById(R.id.dialogUrgent);
-        final TextView endDate = (TextView) taskDialog.findViewById(R.id.endDate);
-        final TextView endTime = (TextView) taskDialog.findViewById(R.id.endTime);
-        final Switch target = (Switch) taskDialog.findViewById(R.id.target);
-        final TextView txtTarget = (TextView) taskDialog.findViewById(R.id.dialogEndDate);
-
-
-        OK.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean isurgent;
-                isurgent = urgent.isChecked();
-                if (isurgent) {
-                    currentTask.setUrgency(1000);
-                } else {
-                    currentTask.setUrgency(100);
-                }
-                if(currentTask.getHasTarget()) {
-
-                    if(currentTask.getNotificationID() == 0) {
-                        currentTask.setNotificationID((int) System.currentTimeMillis());
-                    }
-                }
-
-                if(postion == -1){
-                    ref.push().setValue(currentTask);
-                }
-                else {
-                    ref.child(currentTask.getDbKey() + "/").setValue(currentTask);
-                }
-                taskDialog.dismiss();
-            }
-        });
-
-        target.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!currentTask.getHasTarget()){
-                    currentTask.setHasTarget(false);
-                    endDate.setVisibility(View.GONE);
-                    endTime.setVisibility(View.GONE);
-                    txtTarget.setVisibility(View.GONE);
-                }
-                else{
-                    currentTask.setHasTarget(true);
-                    endDate.setVisibility(View.VISIBLE);
-                    endTime.setVisibility(View.VISIBLE);
-                    txtTarget.setVisibility(View.VISIBLE);
-
-                    if(postion == -1){ //new Task
-                        final Calendar c = Calendar.getInstance();
-                        int day = c.get(Calendar.DAY_OF_MONTH);
-                        int month = c.get(Calendar.MONTH);
-                        int year = c.get(Calendar.YEAR);
-
-                        int hour = c.get(Calendar.HOUR_OF_DAY);
-                        int minute = c.get(Calendar.MINUTE);
-
-                        endDate.setText(day + "/" + (month + 1) + "/" + year);
-                        endTime.setText(hour + ":" + minute);
-
-                    }
-
-                    endDate.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dateDialog = new DatePickerFragment();
-                            dateDialog.show(getFragmentManager(), "datePicker");
-                        }
-
-
-                    });
-
-                    endTime.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            timeDialog = new TimePickerFragmenrt();
-                            timeDialog.show(getFragmentManager(), "timePicker");
-                        }
-                    });
-
-
-                }
-            }
-        });
-
-        cancel.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                taskDialog.dismiss();
-            }
-        });
 
         taskDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        taskDialog.show();
-
+        taskDialog.show();*/
+        Intent i = new Intent(this, TaskDialog.class);
+        i.putExtra("task", t);
+        if(postion == -1){
+            i.putExtra("isNew", true);
+        }
+        i.putExtra("uid", uid);
+        startActivity(i);
     }
 
     public void createNotifications(Task t){

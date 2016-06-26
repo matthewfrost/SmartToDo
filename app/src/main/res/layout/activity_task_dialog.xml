@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    <data>
+        <import type="android.view.View"/>
+        <variable name= "task" type= "co.matthewfrost.taskmanager.Task"/>
+    </data>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/scrollView2">
+        <LinearLayout android:orientation="vertical"
+            android:minWidth="1000dp"
+            android:layout_width="match_parent" android:layout_height="fill_parent"
+            android:padding="@dimen/activity_horizontal_margin">
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Name"
+                android:id="@+id/dialogName" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@={task.name}"
+                android:id="@+id/dialogNameText" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Description"
+                android:id="@+id/dialogDescription" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:text="@={task.Description}"
+                android:ems="10"
+                android:id="@+id/dialogDescriptionText" />
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Set Target"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:checked="@={task.hasTarget}"
+                android:id="@+id/target" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:visibility="@{task.getHasTarget() ? View.VISIBLE : View.GONE}"
+                android:text="End Date"
+                android:id="@+id/dialogEndDate" />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:visibility="@{task.getHasTarget() ? View.VISIBLE : View.GONE}"
+                android:text="@={task.end}"
+                android:id="@+id/endDate" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:visibility="@{task.getHasTarget() ?View.VISIBLE : View.GONE}"
+                android:text="@={task.endTime}"
+                android:id="@+id/endTime" />
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Set Location"
+                android:paddingTop="20dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/switch1" />
+
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="@{task.getHasLocation() ? View.VISIBLE : View.GONE}">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Address"
+                    android:id="@+id/textView9" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/editText"
+                    android:text="@={task.address}"
+                    android:layout_below="@id/textView9"
+                    android:layout_toLeftOf="@+id/button5"
+                    android:layout_toStartOf="@+id/button5" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Find on map"
+                    android:id="@+id/button5"
+                    android:layout_alignBottom="@+id/editText"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true" />
+            </RelativeLayout>
+
+
+
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Urgent"
+
+                android:id="@+id/dialogUrgent"/>
+            <!--android:checked="@{task.urgent}"-->
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="233dp">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:text="OK"
+                    android:id="@+id/dialogOK"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:background="#2ecc71"
+                    android:textColor="#f5f5f5"
+                    android:elevation="4dp" />
+
+                <Button
+                    android:layout_width="100dp"
+                    android:layout_height="50dp"
+                    android:text="Cancel"
+                    android:id="@+id/dialogCancel"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:elevation="4dp"
+                    android:background="#c0392b"
+                    android:textColor="#f5f5f5" />
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+</layout>

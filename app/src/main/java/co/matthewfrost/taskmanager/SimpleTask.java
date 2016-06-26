@@ -19,6 +19,8 @@ public class SimpleTask
     String uid;
     boolean hasTarget;
     int notificationID;
+    String address;
+    boolean hasLocation;
 
     public SimpleTask(){
         this.uid = UUID.randomUUID().toString();
@@ -100,5 +102,21 @@ public class SimpleTask
 
     public void setNotificationID(int notificationID) {
         this.notificationID = notificationID;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public boolean isHasLocation() {
+        return hasLocation;
+    }
+
+    public void setHasLocation(boolean hasLocation) {
+        this.hasLocation = hasLocation;
     }
 }
