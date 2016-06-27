@@ -316,6 +316,9 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         if(postion == -1){
             i.putExtra("isNew", true);
         }
+        else{
+            i.putExtra("isNew", false);
+        }
         i.putExtra("uid", uid);
         startActivity(i);
     }

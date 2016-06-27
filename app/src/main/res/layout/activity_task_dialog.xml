@@ -82,6 +82,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Set Location"
+                android:checked="@={task.hasLocation}"
+                android:onClick="switchLocation"
                 android:paddingTop="20dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:id="@+id/switch1" />
@@ -90,30 +92,32 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="@{task.getHasLocation() ? View.VISIBLE : View.GONE}">
+                android:layout_height="wrap_content">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="Address"
-                    android:id="@+id/textView9" />
+                    android:id="@+id/addressText"
+                    android:visibility="gone"/>
 
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/editText"
+                    android:id="@+id/address"
                     android:text="@={task.address}"
-                    android:layout_below="@id/textView9"
-                    android:layout_toLeftOf="@+id/button5"
-                    android:layout_toStartOf="@+id/button5" />
+                    android:visibility="gone"
+                    android:layout_below="@id/addressText"
+                    android:layout_toLeftOf="@+id/map"
+                    android:layout_toStartOf="@+id/map" />
 
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Find on map"
-                    android:id="@+id/button5"
-                    android:layout_alignBottom="@+id/editText"
+                    android:visibility="gone"
+                    android:id="@+id/map"
+                    android:layout_alignBottom="@+id/address"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true" />
             </RelativeLayout>

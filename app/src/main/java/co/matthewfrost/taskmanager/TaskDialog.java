@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -28,6 +29,9 @@ public class TaskDialog extends AppCompatActivity {
     FirebaseApp app;
     DialogFragment dateDialog;
     DialogFragment timeDialog;
+    Button map;
+    TextView addressText;
+    EditText address;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,9 +52,6 @@ public class TaskDialog extends AppCompatActivity {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService
                 (Context.LAYOUT_INFLATER_SERVICE);
 
-       /* TaskdialogBinding mBinding = DataBindingUtil.inflate(inflater, R.layout.taskdialog, null, false);
-        taskDialog.setContentView(mBinding.getRoot());
-        mBinding.setTask(currentTask);*/
 
         ActivityTaskDialogBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_task_dialog);
         binding.setTask(currentTask);
@@ -58,6 +59,10 @@ public class TaskDialog extends AppCompatActivity {
 
         Button cancel = (Button) findViewById(R.id.dialogCancel);
         Button OK = (Button) findViewById(R.id.dialogOK);
+        map = (Button) findViewById(R.id.map);
+        address = (EditText) findViewById(R.id.address);
+        addressText = (TextView) findViewById(R.id.addressText);
+
         final CheckBox urgent = (CheckBox) findViewById(R.id.dialogUrgent);
         final TextView endDate = (TextView) findViewById(R.id.endDate);
         final TextView endTime = (TextView) findViewById(R.id.endTime);
@@ -88,7 +93,7 @@ public class TaskDialog extends AppCompatActivity {
                 else {
                     ref.child(currentTask.getDbKey() + "/").setValue(currentTask);
                 }
-                //back to main
+                finish();
             }
         });
 
@@ -154,5 +159,20 @@ public class TaskDialog extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void switchLocation(View v){
+        if(currentTask.getHasTarget()){
+            currentTask.setHasTarget(false);
+            map.setVisibility(View.GONE);
+            addressText.setVisibility(View.GONE);
+            address.setVisibility(View.GONE);
+        }
+        else{
+            currentTask.setHasTarget(true);
+            map.setVisibility(View.VISIBLE);
+            addressText.setVisibility(View.VISIBLE);
+            address.setVisibility(View.VISIBLE);
+        }
     }
 }
