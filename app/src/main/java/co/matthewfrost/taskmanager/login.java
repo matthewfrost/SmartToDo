@@ -24,18 +24,22 @@ import com.google.android.gms.common.api.Result;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class login extends AppCompatActivity{
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
     private EditText password;
     private EditText email;
+    FirebaseDatabase database;
+    FirebaseApp app;
     private AccountManager accMan;
     private GoogleApiClient mGoogleApiClient;
     private GoogleSignInOptions gso;
@@ -47,6 +51,10 @@ public class login extends AppCompatActivity{
 
         password = (EditText) findViewById(R.id.password);
         email = (EditText) findViewById(R.id.email);
+
+        app = FirebaseApp.getInstance();
+        database = FirebaseDatabase.getInstance(app);
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {

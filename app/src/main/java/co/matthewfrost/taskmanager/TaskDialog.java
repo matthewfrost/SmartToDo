@@ -1,5 +1,6 @@
 package co.matthewfrost.taskmanager;
 
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
@@ -156,6 +157,16 @@ public class TaskDialog extends AppCompatActivity {
         cancel.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //back to main
+            }
+        });
+
+
+        map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Dialog map = new Dialog(getApplication());
+                map.setContentView(R.layout.map_dialog);
+                map.show();
             }
         });
 

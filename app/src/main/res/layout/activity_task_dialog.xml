@@ -116,6 +116,8 @@
                     android:layout_height="wrap_content"
                     android:text="Find on map"
                     android:visibility="gone"
+                    android:background="#2980b9"
+                    android:textColor="#f5f5f5"
                     android:id="@+id/map"
                     android:layout_alignBottom="@+id/address"
                     android:layout_alignParentRight="true"
