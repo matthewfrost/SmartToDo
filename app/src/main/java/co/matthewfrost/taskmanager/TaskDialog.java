@@ -28,6 +28,7 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -46,6 +47,7 @@ public class TaskDialog extends AppCompatActivity implements GoogleApiClient.OnC
     TextView addressText;
     RelativeLayout locationGroup;
     GoogleApiClient mGoogleApiClient;
+    Place selectedPlace;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,6 +89,7 @@ public class TaskDialog extends AppCompatActivity implements GoogleApiClient.OnC
         final TextView endDate = (TextView) findViewById(R.id.endDate);
         final TextView endTime = (TextView) findViewById(R.id.endTime);
         final Switch target = (Switch) findViewById(R.id.target);
+        final Switch location = (Switch) findViewById(R.id.location);
         final TextView txtTarget = (TextView) findViewById(R.id.dialogEndDate);
 
 
@@ -100,11 +103,29 @@ public class TaskDialog extends AppCompatActivity implements GoogleApiClient.OnC
                 } else {
                     currentTask.setUrgency(100);
                 }
-                if(currentTask.getHasTarget()) {
+                if(target.isChecked()) {
+                    if (currentTask.getHasTarget()) {
 
-                    if(currentTask.getNotificationID() == 0) {
-                        currentTask.setNotificationID((int) System.currentTimeMillis());
+                        if (currentTask.getNotificationID() == 0) {
+                            currentTask.setNotificationID((int) System.currentTimeMillis());
+                        }
                     }
+                }
+                else{
+                    currentTask.setHasTarget(false);
+                }
+
+                if(location.isChecked()) {
+                    if (currentTask.getHasLocation() && selectedPlace != null) {
+                        LatLng placeLatLng;
+                        placeLatLng = selectedPlace.getLatLng();
+                        currentTask.setPlaceID(selectedPlace.getId());
+                        currentTask.setLat(placeLatLng.latitude);
+                        currentTask.setLongitude(placeLatLng.longitude);
+                    }
+                }
+                else{
+                    currentTask.setHasLocation(false);
                 }
 
                 if(isNew){
@@ -125,6 +146,7 @@ public class TaskDialog extends AppCompatActivity implements GoogleApiClient.OnC
             public void onPlaceSelected(Place place) {
                 // TODO: Get info about the selected place.
                 Log.i("", "Place: " + place.getName());
+                selectedPlace = place;
             }
 
             @Override

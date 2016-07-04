@@ -21,6 +21,9 @@ public class SimpleTask
     int notificationID;
     String address;
     boolean hasLocation;
+    String placeID;
+    double lat;
+    double longitude;
 
     public SimpleTask(){
         this.uid = UUID.randomUUID().toString();
@@ -118,5 +121,29 @@ public class SimpleTask
 
     public void setHasLocation(boolean hasLocation) {
         this.hasLocation = hasLocation;
+    }
+
+    public String getPlaceID() {
+        return placeID;
+    }
+
+    public void setPlaceID(String placeID) {
+        this.placeID = placeID;
+    }
+
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 }

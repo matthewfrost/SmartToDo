@@ -190,6 +190,12 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                         createNotifications(t);
                     }
                 }
+                t.setHasLocation(recievedTask.isHasLocation());
+                if(t.getHasTarget()){
+                    t.setPlaceID(recievedTask.getPlaceID());
+                    t.setLongitude(recievedTask.getLongitude());
+                    t.setLat(recievedTask.getLat());
+                }
                 t.setDbKey(dataSnapshot.getKey());
                 list.add(t);
                 arrayAdapter.notifyDataSetChanged();
