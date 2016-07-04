@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +25,7 @@ import android.app.DialogFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
@@ -34,6 +36,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Calendar;
+import java.util.UUID;
 
 import co.matthewfrost.taskmanager.databinding.ActivityTaskDialogBinding;
 
@@ -48,7 +51,7 @@ public class TaskDialog extends AppCompatActivity implements GoogleApiClient.OnC
     RelativeLayout locationGroup;
     GoogleApiClient mGoogleApiClient;
     Place selectedPlace;
-    @Override
+    Geofence geofence;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -122,6 +125,19 @@ public class TaskDialog extends AppCompatActivity implements GoogleApiClient.OnC
                         currentTask.setPlaceID(selectedPlace.getId());
                         currentTask.setLat(placeLatLng.latitude);
                         currentTask.setLongitude(placeLatLng.longitude);
+                        geofence = new Geofence.Builder()
+                                .setCircularRegion(
+                                        currentTask.getLat(),
+                                        currentTask.getLongitude(),
+                                        150
+                                )
+                                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                                    Geofence.GEOFENCE_TRANSITION_EXIT)
+                                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                                .setRequestId(UUID.randomUUID().toString()).build();
+
+
+
                     }
                 }
                 else{
