@@ -5,38 +5,55 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.os.SystemClock;
+import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.app.Fragment;
+import android.app.DialogFragment;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Calendar;
+import java.util.UUID;
 
 import co.matthewfrost.taskmanager.databinding.ActivityTaskDialogBinding;
 
-public class TaskDialog extends AppCompatActivity {
+public class TaskDialog extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     Task currentTask;
     FirebaseDatabase database;
     DatabaseReference ref;
     FirebaseApp app;
     DialogFragment dateDialog;
     DialogFragment timeDialog;
-    Button map;
     TextView addressText;
-    EditText address;
-    @Override
+    RelativeLayout locationGroup;
+    GoogleApiClient mGoogleApiClient;
+    Place selectedPlace;
+    Geofence geofence;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_task_dialog);
 
 
         Intent i = getIntent();
@@ -49,25 +66,33 @@ public class TaskDialog extends AppCompatActivity {
             currentTask = new Task();
         }
 
+        ActivityTaskDialogBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_task_dialog);
+        binding.setTask(currentTask);
+
+        mGoogleApiClient = new GoogleApiClient
+                .Builder(this)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .enableAutoManage(this, this)
+                .build();
+
         Context context = getApplicationContext();
         LayoutInflater inflater = (LayoutInflater) context.getSystemService
                 (Context.LAYOUT_INFLATER_SERVICE);
 
 
-        ActivityTaskDialogBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_task_dialog);
-        binding.setTask(currentTask);
+
 
 
         Button cancel = (Button) findViewById(R.id.dialogCancel);
         Button OK = (Button) findViewById(R.id.dialogOK);
-        map = (Button) findViewById(R.id.map);
-        address = (EditText) findViewById(R.id.address);
         addressText = (TextView) findViewById(R.id.addressText);
-
+        locationGroup = (RelativeLayout) findViewById(R.id.locationGroup);
         final CheckBox urgent = (CheckBox) findViewById(R.id.dialogUrgent);
         final TextView endDate = (TextView) findViewById(R.id.endDate);
         final TextView endTime = (TextView) findViewById(R.id.endTime);
         final Switch target = (Switch) findViewById(R.id.target);
+        final Switch location = (Switch) findViewById(R.id.location);
         final TextView txtTarget = (TextView) findViewById(R.id.dialogEndDate);
 
 
@@ -81,11 +106,42 @@ public class TaskDialog extends AppCompatActivity {
                 } else {
                     currentTask.setUrgency(100);
                 }
-                if(currentTask.getHasTarget()) {
+                if(target.isChecked()) {
+                    if (currentTask.getHasTarget()) {
 
-                    if(currentTask.getNotificationID() == 0) {
-                        currentTask.setNotificationID((int) System.currentTimeMillis());
+                        if (currentTask.getNotificationID() == 0) {
+                            currentTask.setNotificationID((int) System.currentTimeMillis());
+                        }
                     }
+                }
+                else{
+                    currentTask.setHasTarget(false);
+                }
+
+                if(location.isChecked()) {
+                    if (currentTask.getHasLocation() && selectedPlace != null) {
+                        LatLng placeLatLng;
+                        placeLatLng = selectedPlace.getLatLng();
+                        currentTask.setPlaceID(selectedPlace.getId());
+                        currentTask.setLat(placeLatLng.latitude);
+                        currentTask.setLongitude(placeLatLng.longitude);
+                        geofence = new Geofence.Builder()
+                                .setCircularRegion(
+                                        currentTask.getLat(),
+                                        currentTask.getLongitude(),
+                                        150
+                                )
+                                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                                    Geofence.GEOFENCE_TRANSITION_EXIT)
+                                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                                .setRequestId(UUID.randomUUID().toString()).build();
+
+
+
+                    }
+                }
+                else{
+                    currentTask.setHasLocation(false);
                 }
 
                 if(isNew){
@@ -95,6 +151,24 @@ public class TaskDialog extends AppCompatActivity {
                     ref.child(currentTask.getDbKey() + "/").setValue(currentTask);
                 }
                 finish();
+            }
+        });
+
+        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                // TODO: Get info about the selected place.
+                Log.i("", "Place: " + place.getName());
+                selectedPlace = place;
+            }
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Log.i("", "An error occurred: " + status);
             }
         });
 
@@ -161,29 +235,23 @@ public class TaskDialog extends AppCompatActivity {
         });
 
 
-        map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Dialog map = new Dialog(getApplication());
-                map.setContentView(R.layout.map_dialog);
-                map.show();
-            }
-        });
-
     }
 
     public void switchLocation(View v){
         if(currentTask.getHasTarget()){
             currentTask.setHasTarget(false);
-            map.setVisibility(View.GONE);
             addressText.setVisibility(View.GONE);
-            address.setVisibility(View.GONE);
+            locationGroup.setVisibility(View.GONE);
         }
         else{
             currentTask.setHasTarget(true);
-            map.setVisibility(View.VISIBLE);
             addressText.setVisibility(View.VISIBLE);
-            address.setVisibility(View.VISIBLE);
+            locationGroup.setVisibility(View.VISIBLE );
         }
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 }

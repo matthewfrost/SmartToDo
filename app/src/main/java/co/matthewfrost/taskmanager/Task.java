@@ -23,6 +23,9 @@ public class Task extends BaseObservable implements Serializable {
     ObservableBoolean hasTarget = new ObservableBoolean();
     ObservableField<String> address = new ObservableField<>();
     ObservableBoolean hasLocation = new ObservableBoolean();
+    String placeID;
+    double lat;
+    double longitude;
     String dbKey;
     int notificationID;
 
@@ -141,5 +144,29 @@ public class Task extends BaseObservable implements Serializable {
 
     public void setHasLocation(boolean hasLocation) {
         this.hasLocation.set(hasLocation);
+    }
+
+    public String getPlaceID() {
+        return placeID;
+    }
+
+    public void setPlaceID(String placeID) {
+        this.placeID = placeID;
+    }
+
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 }

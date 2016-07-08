@@ -1,167 +1,170 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    >
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
     <data>
-        <import type="android.view.View"/>
-        <variable name= "task" type= "co.matthewfrost.taskmanager.Task"/>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="task"
+            type="co.matthewfrost.taskmanager.Task" />
     </data>
-    <ScrollView
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/scrollView2">
-        <LinearLayout android:orientation="vertical"
-            android:minWidth="1000dp"
-            android:layout_width="match_parent" android:layout_height="fill_parent"
-            android:padding="@dimen/activity_horizontal_margin">
+        android:layout_height="match_parent">
 
 
+        <ScrollView
+            android:id="@+id/scrollView2"
+            android:layout_width="match_parent"
+            android:layout_height="412dp"
+            android:layout_above="@+id/dialogOK"
+            android:layout_alignParentTop="true">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Name"
-                android:id="@+id/dialogName" />
-
-            <EditText
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@={task.name}"
-                android:id="@+id/dialogNameText" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Description"
-                android:id="@+id/dialogDescription" />
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:text="@={task.Description}"
-                android:ems="10"
-                android:id="@+id/dialogDescriptionText" />
-
-            <Switch
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Set Target"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:checked="@={task.hasTarget}"
-                android:id="@+id/target" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:visibility="@{task.getHasTarget() ? View.VISIBLE : View.GONE}"
-                android:text="End Date"
-                android:id="@+id/dialogEndDate" />
+                android:layout_height="fill_parent"
+                android:minWidth="1000dp"
+                android:orientation="vertical"
+                android:padding="@dimen/activity_horizontal_margin">
 
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:visibility="@{task.getHasTarget() ? View.VISIBLE : View.GONE}"
-                android:text="@={task.end}"
-                android:id="@+id/endDate" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:visibility="@{task.getHasTarget() ?View.VISIBLE : View.GONE}"
-                android:text="@={task.endTime}"
-                android:id="@+id/endTime" />
-
-            <Switch
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Set Location"
-                android:checked="@={task.hasLocation}"
-                android:onClick="switchLocation"
-                android:paddingTop="20dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:id="@+id/switch1" />
-
-
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
                 <TextView
+                    android:id="@+id/dialogName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Address"
-                    android:id="@+id/addressText"
-                    android:visibility="gone"/>
+                    android:text="Name"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <EditText
+                    android:id="@+id/dialogNameText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/address"
-                    android:text="@={task.address}"
-                    android:visibility="gone"
-                    android:layout_below="@id/addressText"
-                    android:layout_toLeftOf="@+id/map"
-                    android:layout_toStartOf="@+id/map" />
+                    android:text="@={task.name}" />
 
-                <Button
+                <TextView
+                    android:id="@+id/dialogDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Description"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <EditText
+                    android:id="@+id/dialogDescriptionText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="textMultiLine"
+                    android:text="@={task.Description}" />
+
+                <Switch
+                    android:id="@+id/target"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Find on map"
-                    android:visibility="gone"
-                    android:background="#2980b9"
-                    android:textColor="#f5f5f5"
-                    android:id="@+id/map"
-                    android:layout_alignBottom="@+id/address"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true" />
-            </RelativeLayout>
+                    android:checked="@={task.hasTarget}"
+                    android:text="Set Target"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <TextView
+                    android:id="@+id/dialogEndDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="End Date"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:visibility="@{task.getHasTarget() ? View.VISIBLE : View.GONE}" />
 
 
+                <TextView
+                    android:id="@+id/endDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@={task.end}"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:visibility="@{task.getHasTarget() ? View.VISIBLE : View.GONE}" />
 
-            <CheckBox
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Urgent"
+                <TextView
+                    android:id="@+id/endTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@={task.endTime}"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:visibility="@{task.getHasTarget() ?View.VISIBLE : View.GONE}" />
 
-                android:id="@+id/dialogUrgent"/>
-            <!--android:checked="@{task.urgent}"-->
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="233dp">
-
-                <Button
+                <Switch
+                    android:id="@+id/location"
                     android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:text="OK"
-                    android:id="@+id/dialogOK"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true"
-                    android:background="#2ecc71"
-                    android:textColor="#f5f5f5"
-                    android:elevation="4dp" />
+                    android:layout_height="wrap_content"
+                    android:checked="@={task.hasLocation}"
+                    android:onClick="switchLocation"
+                    android:paddingTop="20dp"
+                    android:text="Set Location"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                <Button
-                    android:layout_width="100dp"
-                    android:layout_height="50dp"
-                    android:text="Cancel"
-                    android:id="@+id/dialogCancel"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:elevation="4dp"
-                    android:background="#c0392b"
-                    android:textColor="#f5f5f5" />
-            </RelativeLayout>
-        </LinearLayout>
-    </ScrollView>
+
+                <RelativeLayout
+                    android:id="@+id/locationGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/addressText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Address"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <fragment
+                        android:id="@+id/place_autocomplete_fragment"
+                        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_below="@+id/addressText" />
+
+                </RelativeLayout>
+
+
+                <CheckBox
+                    android:id="@+id/dialogUrgent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:text="Urgent" />
+                <!--android:checked="@{task.urgent}"-->
+            </LinearLayout>
+        </ScrollView>
+
+
+            <Button
+                android:id="@+id/dialogOK"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:background="#2ecc71"
+                android:elevation="4dp"
+                android:text="OK"
+                android:textColor="#f5f5f5" />
+
+            <Button
+                android:id="@+id/dialogCancel"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_margin="@dimen/activity_vertical_margin"
+                android:background="#c0392b"
+                android:elevation="4dp"
+                android:text="Cancel"
+                android:textColor="#f5f5f5" />
+    </RelativeLayout>
 </layout>
