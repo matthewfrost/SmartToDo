@@ -1,7 +1,9 @@
 package co.matthewfrost.taskmanager;
 
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -15,12 +17,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.app.Fragment;
 import android.app.DialogFragment;
+import android.widget.TimePicker;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -40,7 +44,7 @@ import java.util.UUID;
 
 import co.matthewfrost.taskmanager.databinding.ActivityTaskDialogBinding;
 
-public class TaskDialog extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+public class TaskDialog extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
     Task currentTask;
     FirebaseDatabase database;
     DatabaseReference ref;
@@ -51,6 +55,8 @@ public class TaskDialog extends AppCompatActivity implements GoogleApiClient.OnC
     RelativeLayout locationGroup;
     GoogleApiClient mGoogleApiClient;
     Place selectedPlace;
+    String date;
+    String time;
     Geofence geofence;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -253,5 +259,36 @@ public class TaskDialog extends AppCompatActivity implements GoogleApiClient.OnC
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        date = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
+        setEndDate(date);
+    }
+
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        String hour, minutes;
+        hour = Integer.toString(hourOfDay);
+        minutes = Integer.toString(minute);
+        if(hour.length() == 1){
+            hour = "0" + hour;
+        }
+        if(minutes.length() == 1){
+            minutes = "0" + minutes;
+        }
+        time = hour + ":" + minutes;
+        setEndTime(time);
+    }
+
+    private void setEndDate(String date){
+        TextView endDate = (TextView) findViewById(R.id.endDate);
+        endDate.setText(date);
+    }
+
+    private void setEndTime(String time){
+        TextView endTime = (TextView) findViewById(R.id.endTime);
+        endTime.setText(time);
     }
 }

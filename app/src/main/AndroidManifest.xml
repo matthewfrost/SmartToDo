@@ -40,7 +40,8 @@
 
         <receiver android:name=".TaskAlerter" />
 
-        <activity android:name=".TaskDialog"></activity>
+        <activity android:name=".TaskDialog">
+        </activity>
     </application>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 </manifest>

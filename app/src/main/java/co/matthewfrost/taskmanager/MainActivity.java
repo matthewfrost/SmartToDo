@@ -57,7 +57,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 
-public class MainActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener{
+public class MainActivity extends AppCompatActivity {
     ListView taskList;
     ArrayList<Task> list;
     Dialog taskDialog, deleteDialog;
@@ -348,38 +348,6 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         else{
             alarmManager.set(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis() + diff, alarmIntent);
         }
-    }
-
-    private void setEndDate(Dialog d, String date){
-        TextView endDate = (TextView) d.findViewById(R.id.endDate);
-        endDate.setText(date);
-    }
-
-    private void setEndTime(String time){
-        TextView endTime = (TextView) taskDialog.findViewById(R.id.endTime);
-        endTime.setText(time);
-    }
-
-
-    @Override
-    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-        date = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
-        setEndDate(taskDialog, date);
-    }
-
-    @Override
-    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        String hour, minutes;
-        hour = Integer.toString(hourOfDay);
-        minutes = Integer.toString(minute);
-        if(hour.length() == 1){
-            hour = "0" + hour;
-        }
-        if(minutes.length() == 1){
-            minutes = "0" + minutes;
-        }
-        time = hour + ":" + minutes;
-        setEndTime(time);
     }
 
     @Override

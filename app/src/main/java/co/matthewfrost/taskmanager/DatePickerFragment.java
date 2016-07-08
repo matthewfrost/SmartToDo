@@ -24,7 +24,7 @@ public class DatePickerFragment extends DialogFragment
         int year = c.get(Calendar.YEAR);
 
         // Create a new instance of TimePickerDialog and return it
-        return new DatePickerDialog(getActivity(), (MainActivity)getActivity(), year, month, day);
+        return new DatePickerDialog(getActivity(), (TaskDialog)getActivity(), year, month, day);
     }
 
     @Override
